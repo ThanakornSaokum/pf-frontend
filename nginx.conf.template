@@ -18,7 +18,7 @@ server {
         proxy_buffering off;
         proxy_cache off;
         rewrite ^/api/(.*)$ /$1 break;
-        proxy_pass ${};
+        proxy_pass ${NGINX_PROXY};
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
     }
