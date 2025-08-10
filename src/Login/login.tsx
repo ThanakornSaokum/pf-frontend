@@ -28,7 +28,7 @@ export default function Login() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h2 className="login-title">Login.</h2>
+          <h2 className="login-title">Login</h2>
           <p className="login-subtitle">ยินดีต้อนรับ</p>
         </div>
 
