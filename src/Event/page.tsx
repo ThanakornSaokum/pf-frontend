@@ -1,60 +1,59 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ใช้ navigate เพื่อเด้งกลับหน้า login
-import { api } from "../Service/api";
-import type { Event } from "../types";
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { api } from "../Service/api"
+import type { Event } from "../types"
+import "./event.css"
 
 export default function Events() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<Event[]>([])
   const [form, setForm] = useState({
     title: "",
     description: "",
     imageUrl: "",
     maxParticipants: 0,
     eventDate: "",
-  });
-  const [userId, setUserId] = useState("");
-  const [mode, setMode] = useState<"CREATE" | "EDIT">("CREATE");
-  const [currentEventId, setCurrentEventId] = useState("");
-  const [userName, setUserName] = useState("");
-
-  const navigate = useNavigate();
-  
+  })
+  const [userId, setUserId] = useState("")
+  const [mode, setMode] = useState<"CREATE" | "EDIT">("CREATE")
+  const [currentEventId, setCurrentEventId] = useState("")
+  const [userName, setUserName] = useState("")
+  const navigate = useNavigate()
 
   const fetchEvents = async () => {
-    const res = await api.get("/events");
-    setEvents(res.data.events);
-  };
+    const res = await api.get("/events")
+    setEvents(res.data.events)
+  }
 
   const fetchUser = async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token")
     if (token) {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      setUserId(payload.id);
-      setUserName(payload.name);
+      const payload = JSON.parse(atob(token.split(".")[1]))
+      setUserId(payload.id)
+      setUserName(payload.name)
     }
-  };
+  }
 
   const handleCreate = async () => {
     try {
-      await api.post("/events", form );
-      resetForm();
-      fetchEvents();
+      await api.post("/events", form)
+      resetForm()
+      fetchEvents()
     } catch (err) {
-      console.log(err);
-      alert("Create event failed");
+      console.log(err)
+      alert("Create event failed")
     }
-  };
+  }
 
   const handleUpdate = async () => {
     try {
-      await api.patch("/events", { id: currentEventId, ...form });
-      resetForm();
-      fetchEvents();
+      await api.patch("/events", { id: currentEventId, ...form })
+      resetForm()
+      fetchEvents()
     } catch (err) {
-      console.log(err);
-      alert("Update event failed");
+      console.log(err)
+      alert("Update event failed")
     }
-  };
+  }
 
   const resetForm = () => {
     setForm({
@@ -63,26 +62,15 @@ export default function Events() {
       imageUrl: "",
       maxParticipants: 0,
       eventDate: "",
-    });
-    setMode("CREATE");
-    setCurrentEventId("");
-  };
-
-  // const handleJoin = async (id: string) => {
-  //   await api.post("/events/join", { eventId: id, userId });
-  //   console.log(userId)
-  //   fetchEvents();
-  // };
-
-  // const handleCancel = async (id: string) => {
-  //   await api.post("/events/cancel", { eventId: id, userId });
-  //   fetchEvents();
-  // };
+    })
+    setMode("CREATE")
+    setCurrentEventId("")
+  }
 
   const handleDelete = async (id: string) => {
-    await api.delete("/events", { data: { id } });
-    fetchEvents();
-  };
+    await api.delete("/events", { data: { id } })
+    fetchEvents()
+  }
 
   const handleEditClick = (ev: Event) => {
     setForm({
@@ -90,159 +78,189 @@ export default function Events() {
       description: ev.description,
       imageUrl: ev.imageUrl || "",
       maxParticipants: ev.maxParticipants,
-      eventDate: ev.eventDate.split("T")[0], // ตัดเวลาออกสำหรับ input date
-    });
-    setCurrentEventId(ev.id);
-    setMode("EDIT");
-  };
+      eventDate: ev.eventDate.split("T")[0],
+    })
+    setCurrentEventId(ev.id)
+    setMode("EDIT")
+  }
 
-    const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login"); // กลับไปหน้า login
-  };
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    navigate("/login")
+  }
 
-    const handleToggleDone = async (id: string, currentStatus: boolean) => {
+  const handleToggleDone = async (id: string, currentStatus: boolean) => {
     try {
-      await api.patch(`/events/done`, { id, isDone: !currentStatus });
-      fetchEvents();
+      await api.patch(`/events/done`, { id, isDone: !currentStatus })
+      fetchEvents()
     } catch (err) {
-      console.error(err);
-      alert("Failed to update status");
+      console.error(err)
+      alert("Failed to update status")
     }
-  };
+  }
 
   useEffect(() => {
-    fetchUser();
-    fetchEvents();
-  }, []);
+    fetchUser()
+    fetchEvents()
+  }, [])
 
   return (
-    <main className="container">
-
-       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2>All Events</h2>
-        <p>Welcome, {userName}</p>
-        <button onClick={handleLogout} style={{ background: "red", color: "white", margin: "40px"}}>
-          Logout
-        </button>
+    <div className="events-container">
+      <header className="events-header">
+        <div className="header-content">
+          <h1 className="page-title">Events</h1>
+          <div className="header-right">
+            <p className="welcome-text">ยินดีต้อนรับ, {userName}</p>
+            <button onClick={handleLogout} className="logout-button">
+              ออกจากระบบ
+            </button>
+          </div>
+        </div>
       </header>
 
-      <section>
-        <h3>{mode === "CREATE" ? "Create Event" : "Edit Event"}</h3>
-        <input
-          placeholder="Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-        />
-        <input
-          placeholder="Description"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-        />
-        <input
-          placeholder="Image URL"
-          value={form.imageUrl}
-          onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Max Participants"
-          value={form.maxParticipants}
-          onChange={(e) =>
-            setForm({ ...form, maxParticipants: Number(e.target.value) })
-          }
-        />
-        <input
-          type="date"
-          value={form.eventDate}
-          onChange={(e) => setForm({ ...form, eventDate: e.target.value })}
-        />
+      <div className="main-content">
+        <section className="form-section">
+          <div className="form-card">
+            <h2 className="form-title">{mode === "CREATE" ? "สร้างกิจกรรมใหม่" : "แก้ไขกิจกรรม"}</h2>
 
-        {mode === "CREATE" ? (
-          <button onClick={handleCreate}>Create</button>
-        ) : (
-          <>
-            <button onClick={handleUpdate} style={{marginRight: "20px"}}>Update</button>
-            <button onClick={resetForm} className="secondary">
-              Cancel
-            </button>
-          </>
-        )}
-      </section>
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">ชื่อกิจกรรม</label>
+                <input
+                  className="form-input"
+                  placeholder="กรุณากรอกชื่อกิจกรรม"
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                />
+              </div>
 
-      <section>
-  {events
-    .slice()
-    .sort((a, b) => {
-      if (a.createBy === userId && b.createBy !== userId) return -1;
-      if (a.createBy !== userId && b.createBy === userId) return 1;
-      return 0;
-    })
-    .map((ev) => (
-      <article
-        key={ev.id}
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "16px",
-          padding: "16px",
-          border: "1px solid #ddd",
-          borderRadius: "8px",
-          marginBottom: "16px",
-          //backgroundColor: "#fff",
-        }}
-      >
-        {/* รูปภาพด้านซ้าย */}
-        {ev.imageUrl && (
-          <img
-            src={ev.imageUrl}
-            alt={ev.title}
-            style={{
-              width: "200px",
-              height: "auto",
-              borderRadius: "8px",
-              objectFit: "cover",
-            }}
-          />
-        )}
+              <div className="form-group">
+                <label className="form-label">คำอธิบาย</label>
+                <input
+                  className="form-input"
+                  placeholder="กรุณากรอกคำอธิบาย"
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                />
+              </div>
 
-        {/* ข้อมูลด้านขวา */}
-        <div style={{ flex: 1 }}>
-          <h4 style={{ margin: "0 0 8px" }}>{ev.title}</h4>
-          <p style={{ margin: "0 0 8px" }}>{ev.description}</p>
-          <p style={{ margin: "0 0 8px" }}>
-            {new Date(ev.eventDate).toLocaleDateString()}
-          </p>
+              <div className="form-group">
+                <label className="form-label">URL รูปภาพ</label>
+                <input
+                  className="form-input"
+                  placeholder="กรุณากรอก URL รูปภาพ"
+                  value={form.imageUrl}
+                  onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+                />
+              </div>
 
-          {/* ปุ่มเฉพาะเจ้าของ */}
-          {ev.createBy === userId ? (
-            <>
-              <button
-                style={{ marginRight: "10px" }}
-                onClick={() => handleEditClick(ev)}
-              >
-                ✏️ Edit
-              </button>
-              <button onClick={() => handleDelete(ev.id)}>🗑️ Delete</button>
-              <button
-                style={{
-                  background: ev.isDone ? "green" : "orange",
-                  color: "white",
-                  marginLeft: "10px",
-                }}
-                onClick={() => handleToggleDone(ev.id, ev.isDone)}
-              >
-                {ev.isDone ? "✅ Done" : "⏳ Not Done"}
-              </button>
-            </>
-          ) : (
-            <>{ev.isDone ? "✅ Done" : "⏳ Not Done"}</>
-          )}
-        </div>
-      </article>
-    ))}
-</section>
+              <div className="form-group">
+                <label className="form-label">จำนวนผู้เข้าร่วมสูงสุด</label>
+                <input
+                  className="form-input"
+                  type="number"
+                  placeholder="จำนวนผู้เข้าร่วม"
+                  value={form.maxParticipants}
+                  onChange={(e) => setForm({ ...form, maxParticipants: Number(e.target.value) })}
+                />
+              </div>
 
-    </main>
- );
+              <div className="form-group">
+                <label className="form-label">วันที่จัดกิจกรรม</label>
+                <input
+                  className="form-input"
+                  type="date"
+                  value={form.eventDate}
+                  onChange={(e) => setForm({ ...form, eventDate: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="form-actions">
+              {mode === "CREATE" ? (
+                <button onClick={handleCreate} className="primary-button">
+                  สร้างกิจกรรม
+                </button>
+              ) : (
+                <div className="edit-actions">
+                  <button onClick={handleUpdate} className="primary-button">
+                    อัปเดต
+                  </button>
+                  <button onClick={resetForm} className="secondary-button">
+                    ยกเลิก
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <section className="events-section">
+          <h2 className="section-title">รายการกิจกรรม</h2>
+          <div className="events-grid">
+            {events
+              .slice()
+              .sort((a, b) => {
+                if (a.createBy === userId && b.createBy !== userId) return -1
+                if (a.createBy !== userId && b.createBy === userId) return 1
+                return 0
+              })
+              .map((ev) => (
+                <article key={ev.id} className="event-card">
+                  <div className="card-content">
+                    {/* Left Column - Image */}
+                    <div className="image-column">
+                      {ev.imageUrl ? (
+                        <img src={ev.imageUrl || "/placeholder.svg"} alt={ev.title} className="event-image" />
+                      ) : (
+                        <div className="image-placeholder">
+                          <span>ไม่มีรูปภาพ</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Right Column - Content */}
+                    <div className="content-column">
+                      <div className="event-header">
+                        <h3 className="event-title">{ev.title}</h3>
+                        <div className={`status-badge ${ev.isDone ? "done" : "pending"}`}>
+                          {ev.isDone ? "✅ เสร็จแล้ว" : "⏳ ยังไม่เสร็จ"}
+                        </div>
+                      </div>
+
+                      <p className="event-description">{ev.description}</p>
+
+                      <div className="event-meta">
+                        <span className="event-date">📅 {new Date(ev.eventDate).toLocaleDateString("th-TH")}</span>
+                        <span className="event-participants">👥 สูงสุด {ev.maxParticipants} คน</span>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="event-actions">
+                        {ev.createBy === userId ? (
+                          <>
+                            <button className="action-button edit-button" onClick={() => handleEditClick(ev)}>
+                              ✏️ แก้ไข
+                            </button>
+                            <button className="action-button delete-button" onClick={() => handleDelete(ev.id)}>
+                              🗑️ ลบ
+                            </button>
+                            <button
+                              className={`action-button status-button ${ev.isDone ? "done" : "pending"}`}
+                              onClick={() => handleToggleDone(ev.id, ev.isDone)}
+                            >
+                              {ev.isDone ? "↩️ ยกเลิกเสร็จ" : "✅ ทำเสร็จ"}
+                            </button>
+                          </>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  )
 }

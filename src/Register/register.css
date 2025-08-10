@@ -1,0 +1,257 @@
+* {
+  box-sizing: border-box;
+}
+
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  font-family: "Segoe UI", Mitr, Geneva, Verdana, sans-serif;
+}
+
+.register-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  overflow: hidden;
+}
+
+.register-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.register-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.register-subtitle {
+  color: #718096;
+  font-size: 16px;
+  margin: 0;
+  font-weight: 400;
+}
+
+.register-form {
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 8px;
+  letter-spacing: 0.025em;
+}
+
+.form-input {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  background-color: #f7fafc;
+  color: #2d3748;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-input::placeholder {
+  color: #a0aec0;
+}
+
+.register-button {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.025em;
+  position: relative;
+  overflow: hidden;
+}
+
+.register-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.register-button:active {
+  transform: translateY(0);
+}
+
+.register-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.register-button:hover::before {
+  left: 100%;
+}
+
+.register-footer {
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.login-text {
+  color: #718096;
+  font-size: 14px;
+  margin: 0;
+}
+
+.login-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.login-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .register-container {
+    padding: 16px;
+  }
+
+  .register-card {
+    padding: 32px 24px;
+  }
+
+  .register-title {
+    font-size: 24px;
+  }
+
+  .form-input,
+  .register-button {
+    padding: 14px;
+  }
+}
+
+/* Animation for form elements */
+.form-group {
+  animation: slideUp 0.6s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.form-group:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.form-group:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.form-group:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.register-button {
+  animation: slideUp 0.6s ease forwards;
+  animation-delay: 0.4s;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.register-footer {
+  animation: slideUp 0.6s ease forwards;
+  animation-delay: 0.5s;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading state for button */
+.register-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.register-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Additional styling for the name field */
+.form-group:first-child .form-input {
+  background: linear-gradient(45deg, #f7fafc, #edf2f7);
+}
+
+.form-group:first-child .form-input:focus {
+  background: white;
+}
+
+/* Success state animation */
+@keyframes success {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.register-button.success {
+  animation: success 0.3s ease;
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+}
